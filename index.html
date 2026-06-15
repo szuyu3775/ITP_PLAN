@@ -1,0 +1,359 @@
+import React, { useState } from 'react';
+import { Save, Printer } from 'lucide-react';
+
+const App = () => {
+  const [workExperiences] = useState([
+    // 實習只保留單一狀態範例
+    { id: 1, type: '實習', unit: '實習學分認抵', title: '', description: '使用新北市政府暑期工讀時數申請實習學分認抵。', period: '2025/07/01 - 2025/08/31', status: '已通過' },
+    
+    // 一般工讀與正職
+    { id: 2, type: '工讀', unit: '路易莎咖啡', title: '吧檯計時人員', description: '飲品調製、餐點製作與顧客點餐服務', period: '2025/04/01 - 至今', status: '在職' },
+    { id: 3, type: '正職', unit: '某知名外商', title: '行銷企劃專員', description: '專案企劃撰寫、社群媒體經營與活動成效分析', period: '2026/01/01 - 至今', status: '在職' },
+  ]);
+
+  const [expectedSalary, setExpectedSalary] = useState('32000');
+  const [monthlyExpense, setMonthlyExpense] = useState('10000');
+  const [noExperience, setNoExperience] = useState(false);
+
+  // Claude 風格的區塊標題組件
+  const SectionTitle = ({ title }) => (
+    <h3 className="text-[17px] font-bold text-[#005BAC] border-l-[4px] border-[#005BAC] pl-3 mb-4 mt-12 tracking-wide">
+      {title}
+    </h3>
+  );
+
+  // Claude 風格的表格列組件
+  const TableRow = ({ label, children, isLast = false }) => (
+    <div className={`flex flex-col md:flex-row py-4 ${!isLast ? 'border-b border-gray-200' : ''}`}>
+      <div className="w-full md:w-[160px] shrink-0 font-bold text-gray-800 md:pr-4 mb-2 md:mb-0">
+        {label}
+      </div>
+      <div className="flex-1 text-gray-800 leading-relaxed">
+        {children}
+      </div>
+    </div>
+  );
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  return (
+    <div className="min-h-screen bg-[#f9fafb] py-8 px-4 sm:px-6 flex justify-center font-sans text-[15px]">
+      
+      {/* 主體表單區域 */}
+      <div className="bg-white max-w-[900px] w-full p-8 md:p-12 shadow-sm border border-gray-200 rounded-xl print:shadow-none print:border-none print:p-0">
+        
+        {/* 標題區 */}
+        <div className="text-center mb-10 pb-6 border-b border-gray-200">
+          <h1 className="text-2xl font-bold tracking-widest text-gray-900 mb-2">致理科技大學</h1>
+          <h2 className="text-xl font-medium tracking-widest text-gray-700">個別化轉銜 (ITP) 計畫</h2>
+        </div>
+
+        {/* 一、基本資料 */}
+        <SectionTitle title="一、基本資料" />
+        <div className="overflow-x-auto border-t border-b border-gray-200 mb-8">
+          <table className="w-full text-[15px] min-w-[700px] text-left">
+            <tbody>
+              {/* 第 1 列 */}
+              <tr className="border-b border-gray-200">
+                <td className="py-4 pr-2 font-bold text-gray-800 w-[12%] whitespace-nowrap">姓名</td>
+                <td className="py-4 pr-4 text-gray-800 w-[21%]">王大福</td>
+                <td className="py-4 pr-2 font-bold text-gray-800 w-[12%] whitespace-nowrap">科系</td>
+                <td className="py-4 pr-4 text-gray-800 w-[21%]">企業管理系</td>
+                <td className="py-4 pr-2 font-bold text-gray-800 w-[14%] whitespace-nowrap">個管輔導員</td>
+                <td className="py-4 text-gray-800 w-[20%]">
+                  陳雅婷
+                </td>
+              </tr>
+              {/* 第 2 列 */}
+              <tr className="border-b border-gray-200">
+                <td className="py-4 pr-2 font-bold text-gray-800 whitespace-nowrap">特教類別</td>
+                <td className="py-4 pr-4 text-gray-800">學習障礙</td>
+                <td className="py-4 pr-2 font-bold text-gray-800 whitespace-nowrap">目前年級</td>
+                <td className="py-4 pr-4 text-gray-800">大四</td>
+                <td className="py-4 pr-2 font-bold text-gray-800 whitespace-nowrap">戶籍所在地</td>
+                <td className="py-4 text-gray-800">
+                  新北市 板橋區
+                </td>
+              </tr>
+              {/* 第 3 列 */}
+              <tr className="border-b border-gray-200">
+                <td className="py-4 pr-4 font-bold text-gray-800 align-top">身心障礙相關證明</td>
+                <td className="py-4 text-gray-800 leading-relaxed" colSpan={5}>
+                  <div className="text-[#005BAC]">〔新制〕 第一類 (神經系統構造及精神、心智功能)</div>
+                  <div className="text-gray-600 mt-0.5">ICF【b710b.1、b730b.1】 ; ICD【C41.9】</div>
+                </td>
+              </tr>
+              {/* 第 4 列 */}
+              <tr className="border-b border-gray-200">
+                <td className="py-4 pr-4 font-bold text-gray-800 align-top">輔具使用</td>
+                <td className="py-4 text-gray-800" colSpan={5}>
+                  未填寫 / 無 / 輪椅
+                </td>
+              </tr>
+              {/* 第 5 列 */}
+              <tr>
+                <td className="py-4 pr-4 font-bold text-gray-800 align-top">基本能力</td>
+                <td className="py-4 text-gray-800 space-y-3" colSpan={5}>
+                  <div>生活自理：無須他人協助(無使用輔具)</div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-600 text-sm">※說明：</span>
+                    <input type="text" className="flex-1 border-b border-gray-300 outline-none focus:border-[#005BAC] bg-transparent py-0.5 max-w-[400px]" />
+                  </div>
+                  <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                    <span>交通行動：</span>
+                    <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" className="w-4 h-4 text-[#005BAC] rounded-sm border-gray-300 accent-[#005BAC]" /> 機車</label>
+                    <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" className="w-4 h-4 text-[#005BAC] rounded-sm border-gray-300 accent-[#005BAC]" /> 汽車</label>
+                    <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" defaultChecked className="w-4 h-4 text-[#005BAC] rounded-sm border-gray-300 accent-[#005BAC]" /> 可自行搭乘大眾運輸工具</label>
+                    <label className="flex items-center gap-2 cursor-pointer ml-2"><input type="checkbox" className="w-4 h-4 text-[#005BAC] rounded-sm border-gray-300 accent-[#005BAC]" /> 輔具資源</label>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* 服務情形與評估 */}
+        <SectionTitle title="二、在校期間服務情形" />
+        <div className="border-t border-b border-gray-200">
+          <TableRow label="個別服務">
+            <div className="flex flex-wrap gap-x-6 gap-y-3">
+              <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" defaultChecked className="w-4 h-4 text-[#005BAC] rounded-sm border-gray-300 accent-[#005BAC]" /> 課業諮詢</label>
+              <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" defaultChecked className="w-4 h-4 text-[#005BAC] rounded-sm border-gray-300 accent-[#005BAC]" /> 人際諮詢</label>
+              <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" defaultChecked className="w-4 h-4 text-[#005BAC] rounded-sm border-gray-300 accent-[#005BAC]" /> 職涯諮詢</label>
+              <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" defaultChecked className="w-4 h-4 text-[#005BAC] rounded-sm border-gray-300 accent-[#005BAC]" /> 職業輔導評量</label>
+              <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" className="w-4 h-4 text-[#005BAC] rounded-sm border-gray-300 accent-[#005BAC]" /> 其他</label>
+            </div>
+          </TableRow>
+
+          <TableRow label="支持服務">
+            <div className="flex flex-wrap gap-x-6 gap-y-3">
+              <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" defaultChecked className="w-4 h-4 text-[#005BAC] rounded-sm border-gray-300 accent-[#005BAC]" /> 課業輔導</label>
+              <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" defaultChecked className="w-4 h-4 text-[#005BAC] rounded-sm border-gray-300 accent-[#005BAC]" /> 助理人員</label>
+              <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" defaultChecked className="w-4 h-4 text-[#005BAC] rounded-sm border-gray-300 accent-[#005BAC]" /> 考試服務</label>
+              <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" className="w-4 h-4 text-[#005BAC] rounded-sm border-gray-300 accent-[#005BAC]" /> 無障礙環境</label>
+              <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" className="w-4 h-4 text-[#005BAC] rounded-sm border-gray-300 accent-[#005BAC]" /> 教育輔具</label>
+              <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" className="w-4 h-4 text-[#005BAC] rounded-sm border-gray-300 accent-[#005BAC]" /> 交通服務</label>
+              <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" defaultChecked className="w-4 h-4 text-[#005BAC] rounded-sm border-gray-300 accent-[#005BAC]" /> 資源轉介</label>
+            </div>
+          </TableRow>
+
+          <TableRow label="在校學習摘要">
+            <p className="text-gray-800 leading-relaxed">
+              學生課堂出席穩定，能依教師要求完成課業。面對開放性任務時需較多引導與協助。
+            </p>
+          </TableRow>
+
+          <TableRow label="綜合評估" isLast={true}>
+            <p className="text-gray-800 leading-relaxed">
+              具基本工作能力與就業意願，生活自理及交通能力良好，已累積職場經驗。
+            </p>
+          </TableRow>
+        </div>
+
+        {/* 就業準備情形 */}
+        <SectionTitle title="三、就業準備情形" />
+        <div className="border-t border-b border-gray-200">
+          <TableRow label="職業方向與期待">
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-wrap gap-x-6 gap-y-2">
+                <label className="flex items-center gap-2 cursor-pointer"><input type="radio" name="career" className="w-4 h-4 accent-[#005BAC]" /> 無方向及想法</label>
+                <label className="flex items-center gap-2 cursor-pointer"><input type="radio" name="career" className="w-4 h-4 accent-[#005BAC]" /> 畢業後暫無須工作(家庭支援)</label>
+                <label className="flex items-center gap-2 cursor-pointer"><input type="radio" name="career" defaultChecked className="w-4 h-4 accent-[#005BAC]" /> 有就業意願，但不清楚方向</label>
+                <label className="flex items-center gap-2 cursor-pointer"><input type="radio" name="career" className="w-4 h-4 accent-[#005BAC]" /> 有就業意願，已有初步方向</label>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-lg mt-2 space-y-3">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex items-center gap-2 flex-1">
+                    <span className="text-gray-600 text-sm">產業方向：</span>
+                    <input type="text" className="flex-1 border-b border-gray-300 bg-transparent py-1 outline-none focus:border-[#005BAC]" />
+                  </div>
+                  <div className="flex items-center gap-2 flex-1">
+                    <span className="text-gray-600 text-sm">職業方向：</span>
+                    <input type="text" className="flex-1 border-b border-gray-300 bg-transparent py-1 outline-none focus:border-[#005BAC]" />
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-600 text-sm">薪資期待：</span>
+                  <input 
+                    type="text" 
+                    value={expectedSalary ? Number(expectedSalary).toLocaleString() : ''} 
+                    onChange={(e)=>setExpectedSalary(e.target.value.replace(/\D/g, ''))} 
+                    className="w-24 border-b border-gray-300 bg-transparent py-1 outline-none text-center focus:border-[#005BAC] text-[#005BAC] font-medium" 
+                  />
+                  <span className="text-gray-600 text-sm">元/月</span>
+                </div>
+              </div>
+            </div>
+          </TableRow>
+          
+          <TableRow label="相關專業檢定">
+            <div className="flex flex-col space-y-4 w-full">
+              {/* 上方：打字能力 */}
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-gray-100 pb-4">
+                <span className="font-bold text-[#005BAC]">打字能力</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-700">中文打字：</span>
+                  <input type="text" defaultValue="50" className="w-12 border-b border-gray-300 bg-transparent text-center outline-none focus:border-[#005BAC]" />
+                  <span className="text-gray-600 text-sm">字/分</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-700">英文打字：</span>
+                  <input type="text" defaultValue="30" className="w-12 border-b border-gray-300 bg-transparent text-center outline-none focus:border-[#005BAC]" />
+                  <span className="text-gray-600 text-sm">字/分</span>
+                </div>
+              </div>
+              
+              {/* 下方：專業證照 */}
+              <div>
+                <span className="font-bold text-[#005BAC] block mb-2">專業證照</span>
+                <ol className="list-decimal list-inside space-y-1.5 text-gray-800">
+                  <li>EEC-企業電子化助理規劃師</li>
+                  <li>ITS Python 程式語言核心能力</li>
+                  <li>iHRM創新人力資源管理師</li>
+                  <li>Application Engineer of Business Data (商用數據應用師)</li>
+                  <li>(BMCB) Business Management Certification-Basic 商業管理基礎知能</li>
+                </ol>
+              </div>
+            </div>
+          </TableRow>
+
+          <TableRow label={<>在校期間<br/>職場經驗</>} isLast={true}>
+            <div className="w-full">
+              {/* 無經驗勾選按鈕 */}
+              <div className="mb-4">
+                <label className="inline-flex items-center gap-2 cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors px-3 py-1.5 rounded-md border border-gray-200">
+                  <input 
+                    type="checkbox" 
+                    checked={noExperience} 
+                    onChange={(e) => setNoExperience(e.target.checked)} 
+                    className="w-4 h-4 text-[#005BAC] rounded-sm border-gray-300 accent-[#005BAC]" 
+                  />
+                  <span className="font-medium text-gray-700">無在校職場經驗</span>
+                </label>
+              </div>
+
+              {/* 依據是否勾選無經驗，決定顯示表格或提示文字 */}
+              {!noExperience ? (
+                <div className="overflow-x-auto mt-1">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="border-b-2 border-gray-200 text-gray-800 text-sm">
+                        <th className="font-bold py-2 px-2 w-[10%]">狀態</th>
+                        <th className="font-bold py-2 px-2 w-[25%]">工作單位</th>
+                        <th className="font-bold py-2 px-2 w-[45%]">內容</th>
+                        <th className="font-bold py-2 px-2 w-[20%]">期間</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-sm">
+                      {['實習', '正職', '工讀'].map(category => {
+                        let categoryExps = workExperiences.filter(exp => exp.type === category);
+                        
+                        // 排序邏輯：1. 在職優先， 2. 依照起始日期從新到舊
+                        categoryExps.sort((a, b) => {
+                          if (a.status === '在職' && b.status !== '在職') return -1;
+                          if (a.status !== '在職' && b.status === '在職') return 1;
+                          const dateA = new Date(a.period.split(' - ')[0].replace(/學期/g, ''));
+                          const dateB = new Date(b.period.split(' - ')[0].replace(/學期/g, ''));
+                          if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) return 0;
+                          return dateB.getTime() - dateA.getTime();
+                        });
+
+                        // 若為實習，則將狀態動態加到標題後方
+                        let headerLabel = category;
+                        if (category === '實習') {
+                          const internshipStatus = categoryExps.length > 0 ? categoryExps[0].status : '未完成';
+                          headerLabel = `實習(${internshipStatus})`;
+                        }
+
+                        return (
+                          <React.Fragment key={category}>
+                            <tr className="bg-gray-50 border-b border-gray-200">
+                              <td colSpan={4} className="py-2 px-3 font-bold text-[#005BAC] tracking-wide">
+                                ◆ {headerLabel}
+                              </td>
+                            </tr>
+                            {categoryExps.length > 0 ? (
+                              categoryExps.map((exp) => {
+                                const periodParts = exp.period.split(' - ');
+                                const startDate = periodParts[0];
+                                const endDate = periodParts.length > 1 ? periodParts[1] : null;
+                                
+                                return (
+                                  <tr key={exp.id} className="border-b border-gray-100 last:border-none hover:bg-gray-50 transition-colors">
+                                    <td className={`py-3 px-3 align-top whitespace-nowrap ${exp.status === '在職' ? 'font-bold text-gray-900' : 'font-medium text-gray-700'}`}>
+                                      {exp.status}
+                                    </td>
+                                    <td className="py-3 px-2 align-top">
+                                      <div className="font-medium text-gray-800">{exp.unit}</div>
+                                      {exp.title && <div className="text-gray-500 mt-0.5">{exp.title}</div>}
+                                    </td>
+                                    <td className="py-3 px-2 text-gray-700 whitespace-pre-line leading-relaxed align-top">
+                                      {exp.description}
+                                    </td>
+                                    <td className="py-3 px-2 text-gray-500 whitespace-nowrap align-top">
+                                      <div>{startDate}</div>
+                                      {endDate && <div>~ {endDate}</div>}
+                                    </td>
+                                  </tr>
+                                );
+                              })
+                            ) : (
+                              <tr className="border-b border-gray-100">
+                                <td colSpan={4} className="py-3 px-2 text-gray-400 text-center">
+                                  尚無{category}經驗
+                                </td>
+                              </tr>
+                            )}
+                          </React.Fragment>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center mt-2">
+                  <p className="text-gray-500 font-medium">系統已註記該名學生無在校職場經驗</p>
+                </div>
+              )}
+            </div>
+          </TableRow>
+        </div>
+
+        {/* 離校後預期經濟狀況 */}
+        <SectionTitle title="四、離校後預期經濟狀況" />
+        <div className="border-t border-b border-gray-200">
+          <TableRow label="經濟支出情形">
+            <div className="flex flex-wrap gap-x-6 gap-y-3">
+              <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" defaultChecked className="w-4 h-4 rounded-sm border-gray-300 accent-[#005BAC]" /> 負擔個人基本生活開銷</label>
+              <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" className="w-4 h-4 rounded-sm border-gray-300 accent-[#005BAC]" /> 家人提供照顧</label>
+              <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" className="w-4 h-4 rounded-sm border-gray-300 accent-[#005BAC]" /> 需分擔家計</label>
+              <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" className="w-4 h-4 rounded-sm border-gray-300 accent-[#005BAC]" /> 需歸還貸款</label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" className="w-4 h-4 rounded-sm border-gray-300 accent-[#005BAC]" /> 其他 
+                <input type="text" className="ml-2 border-b border-gray-300 bg-transparent outline-none focus:border-[#005BAC] w-24 px-1" />
+              </label>
+            </div>
+          </TableRow>
+          <TableRow label="每月基本開銷" isLast={true}>
+            <div className="flex items-center gap-3">
+              <span className="text-gray-700">每月約</span>
+              <input 
+                type="text" 
+                value={monthlyExpense ? Number(monthlyExpense).toLocaleString() : ''}
+                onChange={(e) => setMonthlyExpense(e.target.value.replace(/\D/g, ''))}
+                className="border-b border-gray-400 outline-none w-24 text-center bg-transparent focus:border-[#005BAC] text-lg font-medium text-[#005BAC]" 
+              />
+              <span className="text-gray-700">元</span>
+              <span className="text-xs text-gray-400 ml-2">(請依據當地物價及個人習慣估算)</span>
+            </div>
+          </TableRow>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+export default App;
