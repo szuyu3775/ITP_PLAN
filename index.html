@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>個別化轉銜 (ITP) 計畫</title>
-  <!-- 載入 Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
@@ -21,9 +20,11 @@
       .print-hidden {
         display: none !important;
       }
+      /* 列印時強制避免某些區塊被切斷 */
+      tr {
+        page-break-inside: avoid;
+      }
     }
-    
-    /* 浮動提示視窗(Tooltip) 樣式 */
     .has-tooltip {
       position: relative;
       cursor: help;
@@ -101,8 +102,7 @@
       一、基本資料
     </h3>
     <div class="border-t border-b border-gray-200 mb-8">
-      <!-- 移除 min-w 與 overflow-x-auto，改用 table-fixed 強制按比例換行 -->
-      <table class="w-full text-[15px] text-left table-fixed break-words">
+      <table class="table-fixed w-full text-[15px] text-left break-words">
         <colgroup>
           <col class="w-[12%]">
           <col class="w-[21%]">
@@ -138,76 +138,84 @@
           <tr class="border-b border-gray-200">
             <td class="py-4 pr-2 font-bold text-gray-800">主要照顧者</td>
             <td class="py-4 pr-4 text-gray-800">
-              <input type="text" class="w-full border-b border-gray-300 outline-none focus:border-[#005BAC] bg-transparent py-0.5" placeholder="如：父親、母親">
+              <select id="caregiver-select" class="w-full border border-gray-300 rounded-md p-1.5 text-gray-700 outline-none focus:border-[#005BAC] bg-white transition-colors cursor-pointer">
+                <option value="父親" selected>父親</option>
+                <option value="母親">母親</option>
+                <option value="其他">其他</option>
+              </select>
+              <input type="text" id="caregiver-other-input" class="hidden mt-2 w-full border-b border-gray-300 outline-none focus:border-[#005BAC] bg-transparent py-0.5 text-sm" placeholder="請填寫稱呼">
             </td>
             <td class="py-4 pr-2 font-bold text-gray-800">家中經濟來源</td>
             <td class="py-4 pr-4 text-gray-800">
-              <input type="text" class="w-full border-b border-gray-300 outline-none focus:border-[#005BAC] bg-transparent py-0.5" placeholder="如：父親、母親">
+              <input type="text" class="w-full border-b border-gray-300 outline-none focus:border-[#005BAC] bg-transparent py-0.5" placeholder="如：父親、自己">
             </td>
-            <!-- 補齊表格 6 欄架構 -->
-            <td class="py-4 pr-2"></td>
-            <td class="py-4"></td>
+            <td class="py-4 pr-2 font-bold text-gray-800">預計就業地點</td>
+            <td class="py-4 text-gray-800">
+              <input type="text" class="w-full border-b border-gray-300 outline-none focus:border-[#005BAC] bg-transparent py-0.5" placeholder="如：雙北地區">
+            </td>
           </tr>
-          <!-- 第 4 列：身心障礙相關證明 -->
+          
+          <!-- 第 4 列 -->
           <tr class="border-b border-gray-200">
             <td class="py-4 pr-4 font-bold text-gray-800 align-top">身心障礙<br/>相關證明</td>
             <td class="py-4 text-[#66cdaa] leading-relaxed font-medium" colspan="5">
               <div>〔新制〕 第一類 (神經系統構造及精神、心智功能) 中度</div>
-              <div class="mt-0.5">ICF【b710b.1、b730b.1】 ; ICD【C41.9】</div>
+              <div class="mt-0.5 text-gray-600 font-normal">ICF【b710b.1、b730b.1】 ; ICD【C41.9】</div>
               <div class="mt-0.5">有效期限：永久</div>
             </td>
           </tr>
-          <!-- 第 5 列：輔具使用 -->
+          <!-- 第 5 列 -->
           <tr class="border-b border-gray-200">
             <td class="py-4 pr-4 font-bold text-gray-800 align-top">輔具使用</td>
-            <td class="py-4 text-gray-500 font-medium" colspan="5">未填寫</td>
+            <td class="py-4 text-[#66cdaa] font-medium" colspan="5">系統自動帶入</td>
           </tr>
-          <!-- 第 6 列：醫療情形 (移至此處) -->
+          
+          <!-- 第 6 列：醫療情形 (移入基本資料區塊) -->
           <tr class="border-b border-gray-200">
             <td class="py-4 pr-4 font-bold text-gray-800 align-top">醫療情形</td>
-            <td class="py-4 text-gray-800 leading-relaxed" colspan="5">
+            <td class="py-4 text-gray-800" colspan="5">
               <div class="mb-3">
                 <label class="flex items-center gap-2 cursor-pointer w-fit"><input type="checkbox" id="med-none-cb" class="w-4 h-4 accent-[#005BAC]"> 無特殊醫療需求</label>
               </div>
               <div id="med-other-options" class="flex flex-col gap-3 transition-all duration-300">
-                <div class="flex flex-col sm:flex-row sm:items-center gap-2">
-                  <label class="flex items-center gap-2 cursor-pointer shrink-0"><input type="checkbox" class="w-4 h-4 accent-[#005BAC]"> 固定服藥</label>
+                <div class="med-option-group flex flex-col sm:flex-row print:flex-row sm:items-center print:items-center gap-2">
+                  <label class="flex items-center gap-2 cursor-pointer shrink-0"><input type="checkbox" class="med-checkbox w-4 h-4 accent-[#005BAC]"> 固定服藥</label>
                   <div class="flex flex-1 items-center gap-2">
                     <span class="text-sm text-gray-600">(原因：</span>
-                    <input type="text" class="flex-1 border-b border-gray-300 bg-transparent outline-none focus:border-[#005BAC] px-1 py-0.5 text-sm">
+                    <input type="text" class="med-input flex-1 border-b border-gray-300 bg-transparent outline-none focus:border-[#005BAC] px-1 py-0.5 text-sm disabled:border-dashed disabled:cursor-not-allowed">
                     <span class="text-sm text-gray-600">)</span>
                   </div>
                 </div>
-                <div class="flex flex-col sm:flex-row sm:items-center gap-2 flex-wrap">
-                  <label class="flex items-center gap-2 cursor-pointer shrink-0"><input type="checkbox" class="w-4 h-4 accent-[#005BAC]"> 定期門診</label>
+                <div class="med-option-group flex flex-col sm:flex-row print:flex-row sm:items-center print:items-center gap-2">
+                  <label class="flex items-center gap-2 cursor-pointer shrink-0"><input type="checkbox" class="med-checkbox w-4 h-4 accent-[#005BAC]"> 定期門診</label>
                   <div class="flex flex-1 items-center gap-2 flex-wrap">
                     <span class="text-sm text-gray-600">(科別：</span>
-                    <input type="text" class="w-20 flex-1 sm:flex-none border-b border-gray-300 bg-transparent outline-none focus:border-[#005BAC] px-1 py-0.5 text-sm">
+                    <input type="text" class="med-input w-20 border-b border-gray-300 bg-transparent outline-none focus:border-[#005BAC] px-1 py-0.5 text-sm disabled:border-dashed disabled:cursor-not-allowed">
                     <span class="text-sm text-gray-600">；頻率：</span>
-                    <input type="text" class="w-20 flex-1 sm:flex-none border-b border-gray-300 bg-transparent outline-none focus:border-[#005BAC] px-1 py-0.5 text-sm">
+                    <input type="text" class="med-input w-20 border-b border-gray-300 bg-transparent outline-none focus:border-[#005BAC] px-1 py-0.5 text-sm disabled:border-dashed disabled:cursor-not-allowed">
                     <span class="text-sm text-gray-600">；原因：</span>
-                    <input type="text" class="flex-1 min-w-[80px] border-b border-gray-300 bg-transparent outline-none focus:border-[#005BAC] px-1 py-0.5 text-sm">
+                    <input type="text" class="med-input flex-1 min-w-[100px] border-b border-gray-300 bg-transparent outline-none focus:border-[#005BAC] px-1 py-0.5 text-sm disabled:border-dashed disabled:cursor-not-allowed">
                     <span class="text-sm text-gray-600">)</span>
                   </div>
                 </div>
-                <div class="flex flex-col sm:flex-row sm:items-center gap-2 flex-wrap">
-                  <label class="flex items-center gap-2 cursor-pointer shrink-0"><input type="checkbox" class="w-4 h-4 accent-[#005BAC]"> 定期復健</label>
+                <div class="med-option-group flex flex-col sm:flex-row print:flex-row sm:items-center print:items-center gap-2">
+                  <label class="flex items-center gap-2 cursor-pointer shrink-0"><input type="checkbox" class="med-checkbox w-4 h-4 accent-[#005BAC]"> 定期復健</label>
                   <div class="flex flex-1 items-center gap-2 flex-wrap">
                     <span class="text-sm text-gray-600">(科別：</span>
-                    <input type="text" class="w-20 flex-1 sm:flex-none border-b border-gray-300 bg-transparent outline-none focus:border-[#005BAC] px-1 py-0.5 text-sm">
+                    <input type="text" class="med-input w-20 border-b border-gray-300 bg-transparent outline-none focus:border-[#005BAC] px-1 py-0.5 text-sm disabled:border-dashed disabled:cursor-not-allowed">
                     <span class="text-sm text-gray-600">；頻率：</span>
-                    <input type="text" class="w-20 flex-1 sm:flex-none border-b border-gray-300 bg-transparent outline-none focus:border-[#005BAC] px-1 py-0.5 text-sm">
+                    <input type="text" class="med-input w-20 border-b border-gray-300 bg-transparent outline-none focus:border-[#005BAC] px-1 py-0.5 text-sm disabled:border-dashed disabled:cursor-not-allowed">
                     <span class="text-sm text-gray-600">；原因：</span>
-                    <input type="text" class="flex-1 min-w-[80px] border-b border-gray-300 bg-transparent outline-none focus:border-[#005BAC] px-1 py-0.5 text-sm">
+                    <input type="text" class="med-input flex-1 min-w-[100px] border-b border-gray-300 bg-transparent outline-none focus:border-[#005BAC] px-1 py-0.5 text-sm disabled:border-dashed disabled:cursor-not-allowed">
                     <span class="text-sm text-gray-600">)</span>
                   </div>
                 </div>
               </div>
             </td>
           </tr>
-          
+
           <!-- 第 7 列：日常生活及行動能力 -->
-          <tr>
+          <tr class="border-b border-gray-200">
             <td class="py-4 pr-4 font-bold text-gray-800 align-top">日常生活及<br/>行動能力</td>
             <td class="py-4 text-gray-800 space-y-6" colspan="5">
               
@@ -215,17 +223,17 @@
               <div>
                 <div class="flex items-center flex-wrap gap-x-4 gap-y-2 mb-2">
                   <span class="font-bold text-[#005BAC]">生活自理</span>
-                  <span class="text-xs text-gray-400 mr-2">※指的是吃飯、洗澡、穿衣服、買東西等</span>
+                  <span class="text-xs text-gray-400">※指的是吃飯、洗澡、穿衣服、買東西等</span>
                 </div>
-                <div class="pl-2 w-full max-w-md">
+                <div class="w-full max-w-md pl-2">
                   <select id="daily-care-select" class="w-full border border-gray-300 rounded-md p-2 text-gray-700 outline-none focus:border-[#005BAC] bg-white transition-colors cursor-pointer">
-                    <option value="indep_no_tool" selected>獨立完成(無輔具)</option>
-                    <option value="indep_with_tool">獨立完成(有使用輔具)</option>
+                    <option value="獨立完成(無輔具)" selected>獨立完成(無輔具)</option>
+                    <option value="獨立完成(有使用輔具)">獨立完成(有使用輔具)</option>
                     <option value="need_help">部分需他人協助</option>
-                    <option value="need_full_help">完全需由他人協助</option>
+                    <option value="need_help">完全需由他人協助</option>
                   </select>
                 </div>
-                <!-- 生活自理：需協助之展開欄位 -->
+                <!-- 需協助展開區塊 -->
                 <div id="daily-care-help-area" class="hidden mt-3 ml-2 p-4 bg-gray-50 rounded-lg border border-gray-200">
                   <div class="flex items-center gap-1 mb-2">
                     <span class="text-red-500 font-bold">*</span>
@@ -241,7 +249,7 @@
                   </div>
                   <div class="flex items-center gap-2">
                     <span class="text-gray-600 text-sm shrink-0">其它：</span>
-                    <input type="text" placeholder="(必填) 說明需協助內容" class="flex-1 border-b border-gray-300 outline-none focus:border-[#005BAC] bg-transparent py-0.5 max-w-[400px] text-sm">
+                    <input type="text" placeholder="(必填) 說明需協助內容" class="flex-1 min-w-0 border-b border-gray-300 outline-none focus:border-[#005BAC] bg-transparent py-0.5 max-w-[400px] text-sm">
                   </div>
                 </div>
               </div>
@@ -251,12 +259,12 @@
                 <div class="flex items-center flex-wrap gap-x-4 gap-y-2 mb-2">
                   <span class="font-bold text-[#005BAC]">行動能力</span>
                 </div>
-                <div class="pl-2 w-full max-w-md">
-                  <select id="mobility-select" class="w-full border border-gray-300 rounded-md p-2 text-gray-700 outline-none focus:border-[#005BAC] bg-white transition-colors cursor-pointer">
-                    <option value="normal" selected>行動與一般人無異</option>
-                    <option value="slow">行動雖然緩慢，但沒有他人/工具協助</option>
-                    <option value="with_tool">有工具協助 (拐杖/手杖/輪椅/義肢等)</option>
-                    <option value="need_help">需他人協助攙扶/推輪椅</option>
+                <div class="w-full max-w-md pl-2">
+                  <select class="w-full border border-gray-300 rounded-md p-2 text-gray-700 outline-none focus:border-[#005BAC] bg-white transition-colors cursor-pointer">
+                    <option value="行動與一般人無異" selected>行動與一般人無異</option>
+                    <option value="行動雖然緩慢，但沒有他人/工具協助">行動雖然緩慢，但沒有他人/工具協助</option>
+                    <option value="有工具協助 (拐杖/手杖/輪椅/義肢等)">有工具協助 (拐杖/手杖/輪椅/義肢等)</option>
+                    <option value="需他人協助攙扶/推輪椅">需他人協助攙扶/推輪椅</option>
                   </select>
                 </div>
               </div>
@@ -275,8 +283,8 @@
                 </div>
                 <div id="comm-other-input" class="hidden mt-2 ml-2 pl-6">
                   <div class="flex items-center gap-2">
-                    <span class="text-gray-600 text-sm shrink-0">備註：</span>
-                    <input type="text" class="flex-1 border-b border-gray-300 outline-none focus:border-[#005BAC] bg-transparent py-0.5 max-w-[300px] text-sm">
+                    <span class="text-gray-600 text-sm">備註：</span>
+                    <input type="text" class="flex-1 min-w-0 border-b border-gray-300 outline-none focus:border-[#005BAC] bg-transparent py-0.5 max-w-[300px] text-sm">
                   </div>
                 </div>
               </div>
@@ -286,8 +294,9 @@
                 <div class="flex items-center flex-wrap gap-x-4 gap-y-2">
                   <span class="font-bold text-[#005BAC]">交通行動</span>
                 </div>
-                <!-- 上排選項 -->
+                <!-- 上排選項 (新增步行) -->
                 <div class="mt-2 flex flex-wrap items-center gap-x-6 gap-y-2 pl-2">
+                  <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-4 h-4 text-[#005BAC] rounded-sm border-gray-300 accent-[#005BAC]"> 步行</label>
                   <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-4 h-4 text-[#005BAC] rounded-sm border-gray-300 accent-[#005BAC]"> 腳踏車</label>
                   <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-4 h-4 text-[#005BAC] rounded-sm border-gray-300 accent-[#005BAC]"> 機車</label>
                   <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-4 h-4 text-[#005BAC] rounded-sm border-gray-300 accent-[#005BAC]"> 汽車</label>
@@ -306,19 +315,52 @@
 
             </td>
           </tr>
+          
+          <!-- 第 8 列：兵役狀況 -->
+          <tr>
+            <td class="py-4 pr-4 font-bold text-gray-800 align-top">兵役狀況</td>
+            <td class="py-4 text-gray-800" colspan="5">
+              <div class="w-full max-w-md">
+                <select id="military-status-select" class="w-full border border-gray-300 rounded-md p-2 text-gray-700 outline-none focus:border-[#005BAC] bg-white transition-colors cursor-pointer">
+                  <option value="未役">未役</option>
+                  <option value="需服役">需服役</option>
+                  <option value="免役">免役</option>
+                  <option value="替代役">替代役</option>
+                  <option value="已服役" selected>已服役</option>
+                  <option value="不適用（女性或其他原因）">不適用（女性或其他原因）</option>
+                </select>
+              </div>
+              
+              <!-- 需服役 展開區塊 -->
+              <div id="military-type-area" class="hidden mt-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div class="flex items-center gap-1 mb-2">
+                  <span class="text-gray-700 font-medium">請選擇預計役別／役期：</span>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="military_type" class="w-4 h-4 accent-[#005BAC]"> 常備兵役軍事訓練（4個月）</label>
+                  <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="military_type" class="w-4 h-4 accent-[#005BAC]"> 常備兵現役（1年）</label>
+                  <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="military_type" class="w-4 h-4 accent-[#005BAC]"> 一般替代役（1年）</label>
+                  <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="military_type" class="w-4 h-4 accent-[#005BAC]"> 補充兵（12天）</label>
+                  <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="military_type" checked class="w-4 h-4 accent-[#005BAC]"> 尚未確定</label>
+                </div>
+              </div>
+
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
 
+    <!-- 二、輔導歷程及在校表現 -->
     <h3 class="text-[17px] font-bold text-[#005BAC] border-l-[4px] border-[#005BAC] pl-3 mb-4 mt-12 tracking-wide">
-      二、在校期間服務
+      二、輔導歷程及在校表現
     </h3>
     <div class="border-t border-b border-gray-200">
       
       <!-- 支持服務 (上) -->
-      <div class="flex flex-col md:flex-row py-4 border-b border-gray-200">
-        <div class="w-full md:w-[160px] shrink-0 font-bold text-gray-800 md:pr-4 mb-2 md:mb-0">支持服務</div>
-        <div class="flex-1 text-gray-800 leading-relaxed">
+      <div class="flex flex-col md:flex-row print:flex-row py-4 border-b border-gray-200 print:py-2">
+        <div class="w-full md:w-[160px] print:w-[160px] shrink-0 font-bold text-gray-800 mb-2 md:mb-0 print:mb-0 md:pr-4">支持服務</div>
+        <div class="flex-1 min-w-0 text-gray-800 leading-relaxed">
           <div class="flex flex-wrap gap-x-6 gap-y-3">
             <span class="flex items-center gap-2 text-[#66cdaa] font-medium has-tooltip">☑ 課業輔導 <span class="tooltip-text tooltip-top">連動資料後自己打勾，點開可以跳出歷程列表</span></span>
             <span class="flex items-center gap-2 text-[#66cdaa] font-medium has-tooltip">☑ 助理人員 <span class="tooltip-text tooltip-top">連動資料後自己打勾，點開可以跳出歷程列表</span></span>
@@ -327,56 +369,60 @@
             <span class="flex items-center gap-2 text-gray-400">☐ 教育輔具</span>
             <span class="flex items-center gap-2 text-gray-400">☐ 交通服務</span>
             <span class="flex items-center gap-2 text-[#66cdaa] font-medium has-tooltip">☑ 資源轉介 <span class="tooltip-text tooltip-top">連動資料後自己打勾，點開可以跳出歷程列表</span></span>
+            <span class="flex items-center gap-2 text-gray-400">☐ 預留1</span>
+            <span class="flex items-center gap-2 text-gray-400">☐ 預留2</span>
           </div>
         </div>
       </div>
 
       <!-- 個別服務 (下) -->
-      <div class="flex flex-col md:flex-row py-4 border-b border-gray-200">
-        <div class="w-full md:w-[160px] shrink-0 font-bold text-gray-800 md:pr-4 mb-2 md:mb-0">個別服務</div>
-        <div class="flex-1 text-gray-800 leading-relaxed">
+      <div class="flex flex-col md:flex-row print:flex-row py-4 border-b border-gray-200 print:py-2">
+        <div class="w-full md:w-[160px] print:w-[160px] shrink-0 font-bold text-gray-800 mb-2 md:mb-0 print:mb-0 md:pr-4">個別服務</div>
+        <div class="flex-1 min-w-0 text-gray-800 leading-relaxed">
           <div class="flex flex-wrap gap-x-6 gap-y-3">
             <span class="flex items-center gap-2 text-[#66cdaa] font-medium has-tooltip">☑ 課業諮詢 <span class="tooltip-text tooltip-top">連動資料後自己打勾，點開可以跳出歷程列表</span></span>
             <span class="flex items-center gap-2 text-[#66cdaa] font-medium has-tooltip">☑ 人際諮詢 <span class="tooltip-text tooltip-top">連動資料後自己打勾，點開可以跳出歷程列表</span></span>
             <span class="flex items-center gap-2 text-[#66cdaa] font-medium has-tooltip">☑ 職涯諮詢 <span class="tooltip-text tooltip-top">連動資料後自己打勾，點開可以跳出歷程列表</span></span>
             <span class="flex items-center gap-2 text-[#66cdaa] font-medium has-tooltip">☑ 職業輔導評量 <span class="tooltip-text tooltip-top">連動資料後自己打勾，點開可以跳出歷程列表</span></span>
-            <span class="flex items-center gap-2 text-gray-400">☐ 其他</span>
+            <span class="flex items-center gap-2 text-gray-400">☐ 預留1</span>
+            <span class="flex items-center gap-2 text-gray-400">☐ 預留2</span>
           </div>
         </div>
       </div>
 
-      <div class="flex flex-col md:flex-row py-4 border-b border-gray-200">
-        <div class="w-full md:w-[160px] shrink-0 font-bold text-gray-800 md:pr-4 mb-2 md:mb-0">在校學習摘要</div>
-        <div class="flex-1 text-gray-800 leading-relaxed">
+      <div class="flex flex-col md:flex-row print:flex-row py-4 border-b border-gray-200 print:py-2">
+        <div class="w-full md:w-[160px] print:w-[160px] shrink-0 font-bold text-gray-800 mb-2 md:mb-0 print:mb-0 md:pr-4">在校學習摘要</div>
+        <div class="flex-1 min-w-0 text-gray-800 leading-relaxed">
           <p class="text-gray-800 leading-relaxed">
             學生課堂出席穩定，能依教師要求完成課業。面對開放性任務時需較多引導與協助。
           </p>
         </div>
       </div>
 
-      <div class="flex flex-col md:flex-row py-4">
-        <div class="w-full md:w-[160px] shrink-0 font-bold text-gray-800 md:pr-4 mb-2 md:mb-0">綜合評估</div>
-        <div class="flex-1 text-gray-800 leading-relaxed w-full min-w-0">
+      <div class="flex flex-col md:flex-row print:flex-row py-4 print:py-2">
+        <div class="w-full md:w-[160px] print:w-[160px] shrink-0 font-bold text-gray-800 mb-2 md:mb-0 print:mb-0 md:pr-4">綜合評估</div>
+        <div class="flex-1 min-w-0 text-gray-800 leading-relaxed w-full">
           <p class="text-gray-800 leading-relaxed mb-3">
             具基本工作能力與就業意願，生活自理及交通能力良好，已累積職場經驗。
           </p>
           <div class="mt-2">
             <span class="block text-sm font-bold text-[#005BAC] mb-1">其它補充說明：</span>
-            <textarea class="w-full min-h-[80px] p-3 border border-gray-300 rounded-md bg-gray-50 outline-none focus:border-[#005BAC] focus:bg-white transition-colors" placeholder="請填寫其它需要補充的觀察或評估..."></textarea>
+            <textarea class="w-full min-w-0 min-h-[80px] p-3 border border-gray-300 rounded-md bg-gray-50 outline-none focus:border-[#005BAC] focus:bg-white transition-colors" placeholder="請填寫其它需要補充的觀察或評估..."></textarea>
           </div>
         </div>
       </div>
       
     </div>
 
+    <!-- 三、就業準備情形 -->
     <h3 class="text-[17px] font-bold text-[#005BAC] border-l-[4px] border-[#005BAC] pl-3 mb-4 mt-12 tracking-wide">
       三、就業準備情形
     </h3>
     <div class="border-t border-b border-gray-200">
       
-      <div class="flex flex-col md:flex-row py-4 border-b border-gray-200">
-        <div class="w-full md:w-[160px] shrink-0 font-bold text-gray-800 md:pr-4 mb-2 md:mb-0">職業方向與期待</div>
-        <div class="flex-1 text-gray-800 leading-relaxed">
+      <div class="flex flex-col md:flex-row print:flex-row py-4 border-b border-gray-200 print:py-2">
+        <div class="w-full md:w-[160px] print:w-[160px] shrink-0 font-bold text-gray-800 mb-2 md:mb-0 print:mb-0 md:pr-4">職業方向與期待</div>
+        <div class="flex-1 min-w-0 text-gray-800 leading-relaxed">
           <div class="flex flex-col gap-3">
             <div class="w-full max-w-md">
               <select id="career-select" class="w-full border border-gray-300 rounded-md p-2 text-gray-700 outline-none focus:border-[#005BAC] bg-white transition-colors cursor-pointer">
@@ -389,7 +435,7 @@
             
             <!-- 隱藏區塊：產業方向與薪資 -->
             <div id="career-details-area" class="bg-gray-50 p-4 rounded-lg mt-2 space-y-3 transition-opacity duration-300">
-              <div class="flex flex-col sm:flex-row gap-4">
+              <div class="flex flex-col sm:flex-row print:flex-row gap-4">
                 <div class="flex items-center gap-2 flex-1">
                   <span class="text-gray-600 text-sm shrink-0">產業方向：</span>
                   <input type="text" class="flex-1 min-w-0 border-b border-gray-300 bg-transparent py-1 outline-none focus:border-[#005BAC]">
@@ -402,33 +448,40 @@
               <div class="flex items-center gap-2">
                 <span class="text-gray-600 text-sm shrink-0">薪資期待：</span>
                 <input type="text" id="salary-input" class="w-24 border-b border-gray-300 bg-transparent py-1 outline-none text-center focus:border-[#005BAC] text-[#005BAC] font-medium">
-                <span class="text-gray-600 text-sm shrink-0">元/月</span>
+                <span class="text-gray-600 text-sm">元/月</span>
               </div>
             </div>
           </div>
         </div>
       </div>
       
-      <div class="flex flex-col md:flex-row py-4 border-b border-gray-200">
-        <div class="w-full md:w-[160px] shrink-0 font-bold text-gray-800 md:pr-4 mb-2 md:mb-0">相關專業檢定</div>
-        <div class="flex-1 text-gray-800 leading-relaxed">
+      <div class="flex flex-col md:flex-row print:flex-row py-4 border-b border-gray-200 print:py-2">
+        <div class="w-full md:w-[160px] print:w-[160px] shrink-0 font-bold text-gray-800 mb-2 md:mb-0 print:mb-0 md:pr-4">相關專業檢定</div>
+        <div class="flex-1 min-w-0 text-gray-800 leading-relaxed">
           <div class="flex flex-col space-y-4 w-full">
             
-            <!-- 外語能力 -->
+            <!-- 動態新增外語能力版塊 -->
             <div class="flex flex-wrap items-start gap-x-6 gap-y-3 border-b border-gray-100 pb-4">
-              <span class="font-bold text-[#005BAC] shrink-0 mt-1">外語能力</span>
-              <div class="flex flex-col gap-3 flex-1 min-w-0">
-                <div class="flex items-center gap-2">
-                  <span class="text-gray-700 shrink-0">英文 多益(TOEIC)：</span>
-                  <input type="text" value="580" class="w-16 border-b border-gray-300 bg-transparent text-center outline-none focus:border-[#005BAC]">
-                  <span class="text-gray-600 text-sm shrink-0">分</span>
-                </div>
-                <!-- 彈性外語欄位 -->
-                <div class="flex items-center gap-2 flex-wrap">
-                  <span class="text-gray-700 shrink-0">其他外語：</span>
-                  <input type="text" value="日文" placeholder="語言(如日文)" class="w-24 border-b border-gray-300 bg-transparent text-center outline-none focus:border-[#005BAC] text-sm">
-                  <span class="text-gray-600 text-sm shrink-0">程度/分數：</span>
-                  <input type="text" value="N3" placeholder="如 N3" class="w-20 border-b border-gray-300 bg-transparent text-center outline-none focus:border-[#005BAC] text-sm">
+              <div class="flex items-center gap-2 shrink-0 mt-1">
+                <span class="font-bold text-[#005BAC]">外語能力</span>
+                <!-- 動態新增按鈕 -->
+                <button type="button" id="add-language-btn" class="has-tooltip flex items-center justify-center w-5 h-5 rounded-full bg-[#e0f2fe] hover:bg-[#bae6fd] text-[#005BAC] transition-colors print-hidden" title="新增外語">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  <span class="tooltip-text tooltip-top">新增外語檢定</span>
+                </button>
+              </div>
+              <!-- 動態語言列表容器 -->
+              <div id="language-list-container" class="flex flex-col gap-2 flex-1 min-w-0">
+                <!-- 預設第一筆 -->
+                <div class="language-row flex items-center gap-2 flex-wrap bg-gray-50/50 p-1.5 rounded-md border border-transparent hover:border-gray-200 transition-colors print:border-none print:p-0 print:bg-transparent">
+                  <span class="text-gray-700 shrink-0 text-sm">檢定/語言：</span>
+                  <input type="text" value="英文(多益)" placeholder="如：日文(JLPT)" class="flex-1 min-w-[120px] max-w-[200px] border-b border-gray-300 bg-transparent outline-none focus:border-[#005BAC] text-sm py-0.5 px-1 print:border-b-0 print:p-0">
+                  <span class="text-gray-600 text-sm shrink-0 ml-1">程度/分數：</span>
+                  <input type="text" value="580" placeholder="如：N3" class="w-20 border-b border-gray-300 bg-transparent text-center outline-none focus:border-[#005BAC] text-sm py-0.5 px-1 print:border-b-0 print:p-0 print:text-left">
+                  <!-- 刪除按鈕 (預設隱藏或保留給 JS 控制) -->
+                  <button type="button" class="delete-language-btn ml-auto text-gray-400 hover:text-red-500 transition-colors p-1 print-hidden" title="移除此項">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  </button>
                 </div>
               </div>
             </div>
@@ -448,87 +501,97 @@
         </div>
       </div>
 
-      <!-- 實習情形 -->
-      <div class="flex flex-col md:flex-row py-4 border-b border-gray-200">
-        <div class="w-full md:w-[160px] shrink-0 font-bold text-gray-800 md:pr-4 mb-2 md:mb-0">實習情形</div>
-        <div class="flex-1 text-gray-800 leading-relaxed">
-          <div class="flex flex-col gap-3">
-            <div class="w-full max-w-md">
-              <select id="internship-select" class="w-full border border-gray-300 rounded-md p-2 text-gray-700 outline-none focus:border-[#005BAC] bg-white transition-colors cursor-pointer">
-                <option value="not-completed" selected>尚未完成實習</option>
-                <option value="completed">已完成實習</option>
-                <option value="exempted">已由系上專案申請免實習</option>
-                <option value="no-need">無實習門檻(五專、進修部)</option>
-              </select>
-            </div>
-            
-            <!-- 隱藏區塊：實習類型 -->
-            <div id="internship-details-area" class="hidden bg-gray-50 p-4 rounded-lg mt-1 transition-opacity duration-300">
-              <span class="text-gray-700 font-medium block mb-3 text-[14px]">請選擇實習類型：</span>
-              <div class="flex flex-wrap gap-x-6 gap-y-2">
-                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="internship-type" checked class="w-4 h-4 accent-[#005BAC]"> 學年實習</label>
-                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="internship-type" class="w-4 h-4 accent-[#005BAC]"> 學期實習</label>
-                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="internship-type" class="w-4 h-4 accent-[#005BAC]"> 暑期實習</label>
-                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="internship-type" class="w-4 h-4 accent-[#005BAC]"> 暑期實習(公部門)</label>
-              </div>
+      <div class="flex flex-col md:flex-row print:flex-row py-4 border-b border-gray-200 print:py-2">
+        <div class="w-full md:w-[160px] print:w-[160px] shrink-0 font-bold text-gray-800 mb-2 md:mb-0 print:mb-0 md:pr-4">實習情形</div>
+        <div class="flex-1 min-w-0 text-gray-800 leading-relaxed">
+          <div class="w-full max-w-md">
+            <select id="internship-select" class="w-full border border-gray-300 rounded-md p-2 text-gray-700 outline-none focus:border-[#005BAC] bg-white transition-colors cursor-pointer">
+              <option value="尚未完成實習">尚未完成實習</option>
+              <option value="已完成實習">已完成實習</option>
+              <option value="已由系上專案申請免實習">已由系上專案申請免實習</option>
+              <option value="無實習門檻(五專、進修部)">無實習門檻(五專、進修部)</option>
+            </select>
+          </div>
+          
+          <div id="internship-details" class="hidden mt-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <span class="block text-gray-700 font-medium mb-2">請選擇實習類型：</span>
+            <div class="flex flex-wrap gap-4">
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="internship_type" class="w-4 h-4 accent-[#005BAC]"> 學年實習</label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="internship_type" class="w-4 h-4 accent-[#005BAC]"> 學期實習</label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="internship_type" class="w-4 h-4 accent-[#005BAC]"> 暑期實習</label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="internship_type" class="w-4 h-4 accent-[#005BAC]"> 暑期實習(公部門)</label>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="flex flex-col md:flex-row py-4">
-        <div class="w-full md:w-[160px] shrink-0 font-bold text-gray-800 md:pr-4 mb-2 md:mb-0">
+      <div class="flex flex-col md:flex-row print:flex-row py-4 print:py-2">
+        <div class="w-full md:w-[160px] print:w-[160px] shrink-0 font-bold text-gray-800 mb-2 md:mb-0 print:mb-0 md:pr-4">
           在校期間<br/>職場經驗
         </div>
-        <!-- 加入 min-w-0 允許容器縮小，配合內部表格的 table-fixed -->
-        <div class="flex-1 text-gray-800 leading-relaxed w-full min-w-0">
+        <div class="flex-1 min-w-0 text-gray-800 leading-relaxed w-full">
           
           <!-- 按鈕區 -->
-          <div class="mb-4 flex flex-wrap items-center gap-3">
-            <label class="has-tooltip inline-flex items-center gap-2 cursor-pointer bg-white hover:bg-gray-50 transition-colors px-3 py-1.5 rounded-md border border-gray-300 shadow-sm">
+          <div class="mb-4 flex items-center gap-3 print-hidden">
+            <label class="has-tooltip inline-flex items-center gap-2 cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors px-3 py-1.5 rounded-md border border-gray-200">
               <input type="checkbox" id="no-experience-cb" class="w-4 h-4 accent-[#005BAC]">
               <span class="font-medium text-gray-700">在校期間無職場經驗</span>
               <span class="tooltip-text tooltip-top">如果下方已經有內容，則此按鈕無法勾選</span>
             </label>
 
             <!-- 模擬新增經驗按鈕 -->
-            <button type="button" class="has-tooltip inline-flex items-center justify-center bg-[#e0f2fe] hover:bg-[#bae6fd] text-[#005BAC] transition-colors px-4 py-1.5 rounded-md border border-[#bae6fd] font-medium text-[15px]">
+            <button type="button" class="has-tooltip inline-flex items-center gap-1.5 bg-[#e0f2fe] hover:bg-[#bae6fd] text-[#005BAC] transition-colors px-3 py-1.5 rounded-md border border-[#7dd3fc] font-medium text-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
               新增經驗
               <span class="tooltip-text tooltip-top">這是假的，但點了之後可以新增下方資料</span>
             </button>
           </div>
 
-          <!-- 經驗表格容器：移除 overflow-x-auto，改用 table-fixed break-words -->
-          <div id="exp-table-container" class="mt-2 bg-white">
-            <div class="border border-gray-200 rounded-lg">
-              <table class="w-full text-left border-collapse table-fixed break-words">
-                <thead>
-                  <tr class="border-b border-gray-200 text-gray-800 text-[15px] bg-gray-50">
-                    <!-- 設定四個欄位的寬度比例 -->
-                    <th class="font-bold py-3 px-3 w-[15%]">性質</th>
-                    <th class="font-bold py-3 px-3 w-[25%]">單位 / 職稱</th>
-                    <th class="font-bold py-3 px-3 w-[35%]">工作內容</th>
-                    <th class="font-bold py-3 px-3 w-[25%]">起迄日期</th>
-                  </tr>
-                </thead>
-                <tbody id="exp-table-body" class="text-[15px]">
-                  <!-- 由 JavaScript 進行動態渲染 -->
-                </tbody>
-              </table>
-            </div>
+          <!-- 經驗表格容器 (移除橫向捲軸，改為自動換行縮放) -->
+          <div id="exp-table-container" class="mt-1 border border-gray-200 rounded-lg overflow-hidden print:border-none print:mt-0">
+            <table class="table-fixed w-full text-left border-collapse break-words">
+              <thead>
+                <tr class="bg-gray-50 border-b border-gray-200 text-gray-800 text-sm print:bg-transparent">
+                  <th class="font-bold py-3 px-3 w-[12%]">性質</th>
+                  <th class="font-bold py-3 px-3 w-[26%]">單位 / 職稱</th>
+                  <th class="font-bold py-3 px-3 w-[36%]">工作內容</th>
+                  <th class="font-bold py-3 px-3 w-[26%]">起迄日期</th>
+                </tr>
+              </thead>
+              <tbody id="exp-table-body" class="text-sm bg-white">
+                <!-- 由 JavaScript 進行動態渲染 -->
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- 四、離校後預期經濟狀況 -->
     <h3 class="text-[17px] font-bold text-[#005BAC] border-l-[4px] border-[#005BAC] pl-3 mb-4 mt-12 tracking-wide">
       四、離校後預期經濟狀況
     </h3>
     <div class="border-t border-b border-gray-200">
       
-      <div class="flex flex-col md:flex-row py-4 border-b border-gray-200">
-        <div class="w-full md:w-[160px] shrink-0 font-bold text-gray-800 md:pr-4 mb-2 md:mb-0">經濟支出情形</div>
-        <div class="flex-1 text-gray-800 leading-relaxed">
+      <div class="flex flex-col md:flex-row print:flex-row py-4 border-b border-gray-200 print:py-2">
+        <div class="w-full md:w-[160px] print:w-[160px] shrink-0 font-bold text-gray-800 mb-2 md:mb-0 print:mb-0 md:pr-4">使用經濟補助</div>
+        <div class="flex-1 min-w-0 text-gray-800 leading-relaxed">
+          <div class="flex flex-wrap gap-x-6 gap-y-3">
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-4 h-4 accent-[#005BAC]"> 無</label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-4 h-4 accent-[#005BAC]"> 身心障礙者生活補助</label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-4 h-4 accent-[#005BAC]"> 低收入戶/中低收入戶</label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-4 h-4 accent-[#005BAC]"> 租金補貼</label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" class="w-4 h-4 accent-[#005BAC]"> 其他 
+              <input type="text" class="ml-2 flex-1 min-w-[80px] max-w-[150px] border-b border-gray-300 bg-transparent outline-none focus:border-[#005BAC] px-1 text-sm">
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col md:flex-row print:flex-row py-4 border-b border-gray-200 print:py-2">
+        <div class="w-full md:w-[160px] print:w-[160px] shrink-0 font-bold text-gray-800 mb-2 md:mb-0 print:mb-0 md:pr-4">經濟支出情形</div>
+        <div class="flex-1 min-w-0 text-gray-800 leading-relaxed">
           <div class="flex flex-wrap gap-x-6 gap-y-3">
             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked class="w-4 h-4 accent-[#005BAC]"> 負擔個人基本生活開銷</label>
             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-4 h-4 accent-[#005BAC]"> 無經濟壓力(薪水作儲蓄/娛樂)</label>
@@ -536,19 +599,19 @@
             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-4 h-4 accent-[#005BAC]"> 需償還就學貸款</label>
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" class="w-4 h-4 accent-[#005BAC]"> 其他 
-              <input type="text" class="ml-2 flex-1 min-w-[80px] max-w-[150px] border-b border-gray-300 bg-transparent outline-none focus:border-[#005BAC] px-1">
+              <input type="text" class="ml-2 flex-1 min-w-[80px] max-w-[150px] border-b border-gray-300 bg-transparent outline-none focus:border-[#005BAC] px-1 text-sm">
             </label>
           </div>
         </div>
       </div>
 
-      <div class="flex flex-col md:flex-row py-4">
-        <div class="w-full md:w-[160px] shrink-0 font-bold text-gray-800 md:pr-4 mb-2 md:mb-0">每月基本開銷</div>
-        <div class="flex-1 text-gray-800 leading-relaxed">
+      <div class="flex flex-col md:flex-row print:flex-row py-4 print:py-2">
+        <div class="w-full md:w-[160px] print:w-[160px] shrink-0 font-bold text-gray-800 mb-2 md:mb-0 print:mb-0 md:pr-4">每月基本開銷</div>
+        <div class="flex-1 min-w-0 text-gray-800 leading-relaxed">
           <div class="flex items-center gap-3">
-            <span class="text-gray-700 shrink-0">每月約</span>
+            <span class="text-gray-700">每月約</span>
             <input type="text" id="expense-input" class="border-b border-gray-400 outline-none w-24 text-center bg-transparent focus:border-[#005BAC] text-lg font-medium text-[#005BAC]">
-            <span class="text-gray-700 shrink-0">元</span>
+            <span class="text-gray-700">元</span>
           </div>
         </div>
       </div>
@@ -561,30 +624,29 @@
       <span class="tooltip-text tooltip-top">自動串聯ITP會議紀錄</span>
     </h3>
     <div class="border-t border-b border-gray-200">
-      <div class="my-4">
-        <!-- 移除 min-w-[800px] 限制，改用 table-fixed w-full break-words 確保不破框 -->
-        <table class="w-full text-left border-collapse table-fixed break-words">
+      <div class="my-4 border border-gray-200 rounded-lg overflow-hidden print:border-none">
+        <table class="table-fixed w-full text-left border-collapse break-words">
           <thead>
-            <tr class="bg-gray-50 border-b-2 border-gray-200 text-gray-800 text-sm">
-              <th class="font-bold py-3 px-2 w-[16%]">會議時間</th>
-              <th class="has-tooltip font-bold py-3 px-2 w-[12%]">類型
+            <tr class="bg-gray-50 border-b border-gray-200 text-gray-800 text-sm print:bg-transparent">
+              <th class="font-bold py-3 px-3 w-[16%]">會議時間</th>
+              <th class="has-tooltip font-bold py-3 px-3 w-[12%]">類型
                 <span class="tooltip-text tooltip-bottom">自動串聯ITP會議紀錄</span>
               </th>
-              <th class="has-tooltip font-bold py-3 px-2 w-[16%]">形式
+              <th class="has-tooltip font-bold py-3 px-3 w-[16%]">形式
                 <span class="tooltip-text tooltip-bottom">自動串聯ITP會議紀錄</span>
               </th>
-              <th class="font-bold py-3 px-2 w-[40%]">與會人員</th>
-              <th class="font-bold py-3 px-2 w-[16%] text-center">會議紀錄</th>
+              <th class="font-bold py-3 px-3 w-[44%]">與會人員</th>
+              <th class="font-bold py-3 px-3 w-[12%] text-center print-hidden">會議紀錄</th>
             </tr>
           </thead>
-          <tbody class="text-sm">
+          <tbody class="text-sm bg-white">
             <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-              <td class="py-4 px-2 align-middle">
+              <td class="py-4 px-3 align-middle">
                 <div class="text-[#66cdaa] font-medium">2025/05/07</div>
                 <div class="text-[#66cdaa] font-medium mt-1">12:00-13:00</div>
               </td>
-              <td class="py-4 px-2 align-middle">
-                <select class="w-full border border-gray-300 rounded p-1.5 text-gray-700 outline-none focus:border-[#005BAC] bg-white cursor-pointer">
+              <td class="py-4 px-3 align-middle">
+                <select class="w-full border border-gray-300 rounded p-1.5 text-gray-700 outline-none focus:border-[#005BAC] bg-white print:border-none print:appearance-none print:p-0">
                   <option value="一般" selected>一般</option>
                   <option value="職重">職重</option>
                   <option value="公職">公職</option>
@@ -593,20 +655,20 @@
                   <option value="其他">其他</option>
                 </select>
               </td>
-              <td class="py-4 px-2 align-middle">
-                <select class="w-full border border-gray-300 rounded p-1.5 text-gray-700 outline-none focus:border-[#005BAC] bg-white cursor-pointer">
+              <td class="py-4 px-3 align-middle">
+                <select class="w-full border border-gray-300 rounded p-1.5 text-gray-700 outline-none focus:border-[#005BAC] bg-white print:border-none print:appearance-none print:p-0">
                   <option value="個別(實體)" selected>個別(實體)</option>
                   <option value="個別(線上)">個別(線上)</option>
                   <option value="座談(實體)">座談(實體)</option>
                   <option value="座談(線上)">座談(線上)</option>
                 </select>
               </td>
-              <td class="py-4 px-2 align-middle">
-                <div class="text-[#66cdaa] font-medium leading-relaxed break-words">
+              <td class="py-4 px-3 align-middle">
+                <div class="text-[#66cdaa] font-medium leading-relaxed">
                   學生、家長、個管、職涯輔導員、校外專家
                 </div>
               </td>
-              <td class="py-4 px-2 align-middle text-center">
+              <td class="py-4 px-3 align-middle text-center print-hidden">
                 <button class="inline-flex items-center gap-1.5 bg-white border border-gray-300 text-gray-700 px-3 py-1.5 rounded hover:bg-gray-50 transition-colors text-sm font-medium">
                   檢視
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
@@ -641,7 +703,7 @@
 
     // === 資料區 ===
     const workExperiences = [
-      { id: 1, type: '實習', unit: '新北市政府', title: '暑期工讀生', description: '基本環境清潔、文書處理', period: '2026/02/01 - 至今', status: '實習中' },
+      { id: 1, type: '實習', unit: '實習學分認抵', title: '', description: '使用新北市政府暑期工讀時數申請實習學分認抵。', period: '2026/02/01 - 2026/08/31', status: '實習中' },
       { id: 2, type: '兼職', unit: '路易莎咖啡', title: '吧檯計時人員', description: '飲品調製、餐點製作與顧客點餐服務', period: '2025/04/01 - 至今', status: '在職' },
       { id: 3, type: '全職', unit: '某知名外商', title: '行銷企劃專員', description: '專案企劃撰寫、社群媒體經營與活動成效分析', period: '2026/01/01 - 至今', status: '在職' },
       { id: 4, type: '兼職', unit: '全聯福利中心', title: '收銀人員', description: '檔期支援、收銀結帳', period: '2024/01/15 - 2024/02/05', status: '已離職' },
@@ -656,27 +718,89 @@
 
     const salaryInput = document.getElementById('salary-input');
     const expenseInput = document.getElementById('expense-input');
+
     if(salaryInput) salaryInput.value = formatNumber('32000');
     if(expenseInput) expenseInput.value = formatNumber('10000');
-    
+
     const handleInput = (e) => { e.target.value = formatNumber(e.target.value); };
     if(salaryInput) salaryInput.addEventListener('input', handleInput);
     if(expenseInput) expenseInput.addEventListener('input', handleInput);
 
-    // === 生活自理輔助項目顯示邏輯 (Select) ===
+    // === 主要照顧者：下拉選單連動 ===
+    const caregiverSelect = document.getElementById('caregiver-select');
+    const caregiverOtherInput = document.getElementById('caregiver-other-input');
+    if (caregiverSelect && caregiverOtherInput) {
+      caregiverSelect.addEventListener('change', (e) => {
+        if (e.target.value === '其他') {
+          caregiverOtherInput.classList.remove('hidden');
+        } else {
+          caregiverOtherInput.classList.add('hidden');
+        }
+      });
+    }
+
+    // === 外語能力動態新增/刪除邏輯 ===
+    const addLangBtn = document.getElementById('add-language-btn');
+    const langContainer = document.getElementById('language-list-container');
+    
+    if (addLangBtn && langContainer) {
+      // 更新刪除按鈕狀態（確保至少留一筆）
+      const updateDeleteButtons = () => {
+        const rows = langContainer.querySelectorAll('.language-row');
+        const deleteBtns = langContainer.querySelectorAll('.delete-language-btn');
+        if (rows.length <= 1) {
+          // 如果只剩一筆，隱藏或禁用刪除按鈕
+          deleteBtns.forEach(btn => btn.style.display = 'none');
+        } else {
+          // 多於一筆，顯示所有刪除按鈕
+          deleteBtns.forEach(btn => btn.style.display = 'block');
+        }
+      };
+
+      // 監聽刪除動作 (事件委派)
+      langContainer.addEventListener('click', (e) => {
+        const deleteBtn = e.target.closest('.delete-language-btn');
+        if (deleteBtn) {
+          const row = deleteBtn.closest('.language-row');
+          if (row && langContainer.querySelectorAll('.language-row').length > 1) {
+            row.remove();
+            updateDeleteButtons(); // 重新計算按鈕顯示狀態
+          }
+        }
+      });
+
+      // 新增一列
+      addLangBtn.addEventListener('click', () => {
+        const newRow = document.createElement('div');
+        newRow.className = 'language-row flex items-center gap-2 flex-wrap bg-gray-50/50 p-1.5 rounded-md border border-transparent hover:border-gray-200 transition-colors print:border-none print:p-0 print:bg-transparent';
+        newRow.innerHTML = `
+          <span class="text-gray-700 shrink-0 text-sm">檢定/語言：</span>
+          <input type="text" placeholder="如：日文(JLPT)" class="flex-1 min-w-[120px] max-w-[200px] border-b border-gray-300 bg-transparent outline-none focus:border-[#005BAC] text-sm py-0.5 px-1 print:border-b-0 print:p-0">
+          <span class="text-gray-600 text-sm shrink-0 ml-1">程度/分數：</span>
+          <input type="text" placeholder="如：N3" class="w-20 border-b border-gray-300 bg-transparent text-center outline-none focus:border-[#005BAC] text-sm py-0.5 px-1 print:border-b-0 print:p-0 print:text-left">
+          <button type="button" class="delete-language-btn ml-auto text-gray-400 hover:text-red-500 transition-colors p-1 print-hidden" title="移除此項">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        `;
+        langContainer.appendChild(newRow);
+        updateDeleteButtons();
+      });
+
+      // 畫面載入時先執行一次，決定初始是否顯示刪除按鈕
+      updateDeleteButtons();
+    }
+
+    // === 生活自理輔助項目顯示邏輯 (改為下拉選單) ===
     const dailyCareSelect = document.getElementById('daily-care-select');
     const dailyCareHelpArea = document.getElementById('daily-care-help-area');
     if (dailyCareSelect && dailyCareHelpArea) {
       dailyCareSelect.addEventListener('change', (e) => {
-        if (e.target.value === 'need_help' || e.target.value === 'need_full_help') {
+        if (e.target.value === 'need_help') {
           dailyCareHelpArea.classList.remove('hidden');
         } else {
           dailyCareHelpArea.classList.add('hidden');
         }
       });
-      if (dailyCareSelect.value === 'need_help' || dailyCareSelect.value === 'need_full_help') {
-          dailyCareHelpArea.classList.remove('hidden');
-      }
     }
 
     // === 溝通習慣：其它輸入框顯示邏輯 ===
@@ -684,31 +808,35 @@
     const commOtherInput = document.getElementById('comm-other-input');
     if (commOtherCb && commOtherInput) {
       commOtherCb.addEventListener('change', (e) => {
-        if (e.target.checked) {
-          commOtherInput.classList.remove('hidden');
-        } else {
-          commOtherInput.classList.add('hidden');
-        }
+        if (e.target.checked) commOtherInput.classList.remove('hidden');
+        else commOtherInput.classList.add('hidden');
       });
     }
 
-    // === 醫療情形收納邏輯 ===
+    // === 醫療情形禁用邏輯 ===
     const medNoneCb = document.getElementById('med-none-cb');
     const medOtherOptions = document.getElementById('med-other-options');
     if (medNoneCb && medOtherOptions) {
-      medNoneCb.addEventListener('change', (e) => {
-        if (e.target.checked) {
-          medOtherOptions.classList.add('hidden');
+      const toggleMedInputs = () => {
+        const isNone = medNoneCb.checked;
+        const checkboxes = medOtherOptions.querySelectorAll('.med-checkbox');
+        const inputs = medOtherOptions.querySelectorAll('.med-input');
+        
+        if (isNone) {
+          medOtherOptions.classList.add('opacity-40'); // 視覺上變淡
+          checkboxes.forEach(cb => { cb.disabled = true; cb.checked = false; });
+          inputs.forEach(input => { input.disabled = true; input.value = ''; });
         } else {
-          medOtherOptions.classList.remove('hidden');
+          medOtherOptions.classList.remove('opacity-40'); // 恢復正常亮度
+          checkboxes.forEach(cb => { cb.disabled = false; });
+          inputs.forEach(input => { input.disabled = false; });
         }
-      });
-      if (medNoneCb.checked) {
-          medOtherOptions.classList.add('hidden');
-      }
+      };
+      medNoneCb.addEventListener('change', toggleMedInputs);
+      toggleMedInputs(); // 初始化載入時檢查狀態
     }
 
-    // === 職業方向與期待：隱藏連動邏輯 (Select) ===
+    // === 職業方向與期待：隱藏連動邏輯 (改為下拉選單) ===
     const careerSelect = document.getElementById('career-select');
     const careerDetailsArea = document.getElementById('career-details-area');
     if (careerSelect && careerDetailsArea) {
@@ -719,27 +847,32 @@
           careerDetailsArea.classList.remove('hidden');
         }
       });
-      if (careerSelect.value === 'need-idea' || careerSelect.value === 'has-idea') {
-          careerDetailsArea.classList.remove('hidden');
-      } else {
-          careerDetailsArea.classList.add('hidden');
-      }
     }
 
-    // === 實習情形：隱藏連動邏輯 (Select) ===
+    // === 實習情形下拉選單連動 ===
     const internshipSelect = document.getElementById('internship-select');
-    const internshipDetailsArea = document.getElementById('internship-details-area');
-    if (internshipSelect && internshipDetailsArea) {
+    const internshipDetails = document.getElementById('internship-details');
+    if (internshipSelect && internshipDetails) {
       internshipSelect.addEventListener('change', (e) => {
-        if (e.target.value === 'completed') {
-          internshipDetailsArea.classList.remove('hidden');
+        if (e.target.value === '已完成實習') {
+          internshipDetails.classList.remove('hidden');
         } else {
-          internshipDetailsArea.classList.add('hidden');
+          internshipDetails.classList.add('hidden');
         }
       });
-      if (internshipSelect.value === 'completed') {
-          internshipDetailsArea.classList.remove('hidden');
-      }
+    }
+    
+    // === 兵役狀況：下拉選單連動 ===
+    const militaryStatusSelect = document.getElementById('military-status-select');
+    const militaryTypeArea = document.getElementById('military-type-area');
+    if (militaryStatusSelect && militaryTypeArea) {
+      militaryStatusSelect.addEventListener('change', (e) => {
+        if (e.target.value === '需服役') {
+          militaryTypeArea.classList.remove('hidden');
+        } else {
+          militaryTypeArea.classList.add('hidden');
+        }
+      });
     }
 
     // === 無經驗切換功能 ===
@@ -747,20 +880,16 @@
     const tableContainer = document.getElementById('exp-table-container');
     if (noExpCb && tableContainer) {
       noExpCb.addEventListener('change', (e) => {
-        if (e.target.checked) {
-          tableContainer.classList.add('hidden');
-        } else {
-          tableContainer.classList.remove('hidden');
-        }
+        if (e.target.checked) tableContainer.classList.add('hidden');
+        else tableContainer.classList.remove('hidden');
       });
     }
 
-    // === 年資計算功能 ===
+    // === 年資計算功能 (動態計算) ===
     window.calcDurationText = function(startVal, endVal, isPresent) {
       if (!startVal) return '';
-      // 使用 '-' 替換為 '/' 來避免不同瀏覽器解析 UTC 的誤差
-      const startDate = new Date(startVal.replace(/-/g, '/'));
-      const endDate = isPresent ? new Date() : (endVal ? new Date(endVal.replace(/-/g, '/')) : null);
+      const startDate = new Date(startVal);
+      const endDate = isPresent ? new Date() : (endVal ? new Date(endVal) : null);
 
       if (!endDate || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) return '';
       if (endDate < startDate) return '日期錯誤';
@@ -782,7 +911,7 @@
       const totalMonths = years * 12 + months;
 
       if (totalMonths === 0) {
-          const decimalMonths = Math.max(0.1, (days / 30)).toFixed(1);
+          const decimalMonths = (days / 30).toFixed(1);
           return `共 ${decimalMonths} 個月`;
       } else {
           let res = '共 ';
@@ -810,18 +939,15 @@
 
     window.togglePresent = function(cb) {
       const group = cb.closest('.exp-period-group');
-      const endDateWrapper = group.querySelector('.end-date-wrapper');
+      const endDateInput = group.querySelector('.end-date');
       const presentText = group.querySelector('.present-text');
-      const labelText = group.querySelector('.present-label-text');
 
       if (cb.checked) {
-          endDateWrapper.classList.add('hidden');
+          endDateInput.classList.add('hidden');
           presentText.classList.remove('hidden');
-          if(labelText) labelText.classList.replace('text-gray-600', 'text-[#005BAC]');
       } else {
-          endDateWrapper.classList.remove('hidden');
+          endDateInput.classList.remove('hidden');
           presentText.classList.add('hidden');
-          if(labelText) labelText.classList.replace('text-[#005BAC]', 'text-gray-600');
       }
       window.recalcDuration(cb);
     };
@@ -834,11 +960,10 @@
       
       let sortedExps = [...workExperiences];
 
-      // 排序邏輯：依照「迄日」由新到舊。
       sortedExps.sort((a, b) => {
         const getEndTimestamp = (exp) => {
           const isPresent = (exp.status === '在職' || exp.status === '實習中' || exp.period.includes('至今'));
-          if (isPresent) return Infinity;
+          if (isPresent) return Infinity; 
           
           const parts = exp.period.split(' - ');
           const endDateStr = parts.length > 1 ? parts[1] : parts[0];
@@ -858,48 +983,36 @@
           const startInputVal = startDate.replace(/\//g, '-');
           const endInputVal = isPresent ? '' : (endDate ? endDate.replace(/\//g, '-') : '');
 
-          const titleHtml = exp.title ? `<div class="text-gray-500 text-[14px] mt-1 break-words">${exp.title}</div>` : '';
+          const titleHtml = exp.title ? `<div class="text-gray-500 mt-0.5">${exp.title}</div>` : '';
           const descHtml = exp.description.replace(/\n/g, '<br>');
-          const labelColor = isPresent ? 'text-[#005BAC] font-medium' : 'text-gray-600';
 
-          // 重構排版：td 不再加 whitespace-nowrap 且加上 break-words 確保能正常換行
-          // 輸入框加上 min-w-0 避免撐破 flex 容器
           tbody.innerHTML += `
-            <tr class="border-b border-gray-100 last:border-none hover:bg-gray-50 transition-colors" data-type="${exp.type}">
-              <td class="py-3 px-3 align-top text-gray-800 font-medium break-words">
+            <tr class="border-b border-gray-100 last:border-none hover:bg-gray-50 transition-colors">
+              <td class="py-4 px-3 align-top font-medium text-gray-800">
                 ${exp.type}
               </td>
-              <td class="py-3 px-3 align-top break-words">
-                <div class="font-bold text-gray-900 text-[16px]">${exp.unit}</div>
+              <td class="py-4 px-3 align-top">
+                <div class="font-bold text-gray-900">${exp.unit}</div>
                 ${titleHtml}
               </td>
-              <td class="py-3 px-3 text-gray-800 leading-relaxed align-top break-words">
+              <td class="py-4 px-3 text-gray-700 leading-relaxed align-top">
                 ${descHtml}
               </td>
-              <td class="py-3 px-3 align-top">
-                <div class="exp-period-group flex flex-col w-full">
+              <td class="py-4 px-3 align-top">
+                <div class="exp-period-group flex flex-col gap-2">
+                  <input type="date" value="${startInputVal}" class="start-date w-full flex-1 min-w-0 border-b border-gray-300 bg-transparent text-gray-600 outline-none text-[14px] cursor-pointer focus:border-[#005BAC] transition-colors print:border-none print:p-0" onchange="window.recalcDuration(this)">
+                  <input type="date" value="${endInputVal}" class="end-date w-full flex-1 min-w-0 border-b border-gray-300 bg-transparent text-gray-600 outline-none text-[14px] cursor-pointer focus:border-[#005BAC] transition-colors print:border-none print:p-0 ${isPresent ? 'hidden' : ''}" onchange="window.recalcDuration(this)">
+                  <span class="present-text text-[#005BAC] font-bold text-[14px] ${isPresent ? '' : 'hidden'} w-full border-b border-transparent">至今</span>
                   
-                  <div class="flex items-center mb-1 w-full">
-                    <input type="date" value="${startInputVal}" class="start-date flex-1 min-w-0 bg-transparent text-gray-600 outline-none text-[14px] cursor-pointer" onchange="window.recalcDuration(this)">
-                  </div>
-                  
-                  <div class="end-date-wrapper flex items-center mb-1 w-full ${isPresent ? 'hidden' : ''}">
-                     <input type="date" value="${endInputVal}" class="end-date flex-1 min-w-0 bg-transparent text-gray-600 outline-none text-[14px] cursor-pointer" onchange="window.recalcDuration(this)">
-                  </div>
-                  
-                  <div class="present-text text-[#005BAC] font-bold text-[14px] mb-1 ${isPresent ? '' : 'hidden'}">至今</div>
-                  
-                  <div class="mt-1">
-                    <label class="inline-flex items-center gap-1.5 cursor-pointer w-fit">
-                       <input type="checkbox" class="is-present-cb w-4 h-4 accent-[#005BAC] border-gray-300 rounded-sm" ${isPresent ? 'checked' : ''} onchange="window.togglePresent(this)">
-                       <span class="present-label-text text-[13px] ${labelColor}">仍在職</span>
+                  <div class="print-hidden">
+                    <label class="inline-flex items-center gap-1 cursor-pointer hover:bg-gray-100 p-0.5 rounded transition-colors mt-0.5">
+                       <input type="checkbox" class="is-present-cb w-4 h-4 accent-[#005BAC]" ${isPresent ? 'checked' : ''} onchange="window.togglePresent(this)">
+                       <span class="text-sm text-gray-600">仍在職</span>
                     </label>
                   </div>
-                  
-                  <div class="mt-1">
-                     <span class="duration-display text-[13px] font-bold text-[#005BAC]"></span>
+                  <div>
+                     <span class="duration-display text-sm font-bold text-[#005BAC]"></span>
                   </div>
-
                 </div>
               </td>
             </tr>
@@ -908,7 +1021,7 @@
       } else {
         tbody.innerHTML = `
           <tr class="border-b border-gray-100">
-            <td colspan="4" class="py-8 px-4 text-gray-400 text-center font-medium">
+            <td colspan="4" class="py-6 px-2 text-gray-400 text-center font-medium">
               尚無職場經驗紀錄
             </td>
           </tr>
@@ -920,6 +1033,7 @@
       });
     }
 
+    // 頁面載入時渲染表格
     renderTable();
   </script>
 </body>
